@@ -8,9 +8,20 @@ button.addEventListener('click', function(e) {
         if(result === 'granted') {
             var options = {
                 body: 'This is a sample notification',
-                icon: 'twit.jpg'
+                icon: 'images/twit.jpg'
             }
             var notif = new Notification('Tweet App', options);
         }
     });
 });
+
+const searchBtn = document.getElementById("search-btn");
+if (searchBtn) {
+    searchBtn.addEventListener('click', (e) => {
+        const searchTerm = document.getElementById("search-input").value,
+        rederictURL = `/tweet-list?term=${searchTerm}`;
+        if (searchTerm.length != 0) {
+            window.location = rederictURL;
+        }
+    })
+}

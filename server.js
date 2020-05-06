@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded())
 app.use(express.static('static'))
 app.set('view engine', 'ejs')
-app.set('views','static')
+app.set('views','static/views')
 
 let client;
 
@@ -40,38 +40,61 @@ let client;
 })
  */
 app.get('/', (req, res, next) => {
+    res.render('index')
+})
 
-    client.get(`/search/tweets`, {
-        q: "Corona", // The search term
-        lang: "en",        // Let's only get English tweets
-        count: 10,        // Limit the results to 100 tweets
-    })
-    .then(resp => {
-        res.render('index', {
-            tweets: resp.statuses
+app.get('/tweet-list', (req, res, next) => {
+    console.log(req.query)
+    if (req.query.term === '') {
+        res.status(500).render('tweet-list', {
+            error: true,
+            msg: 'Enter a valid search term'
         })
-    })
+    } else {
+        client.get(`/search/tweets`, {
+            q: req.query.term, 
+            lang: "en",
+            count: 20,
+        })
+        .then(resp => {
+            res.render('tweet-list', {
+                error: false,
+                tweets: resp.statuses
+            })
+        })
+        .catch(e => {
+            res.status(500).render('tweet-list').json({
+                'message': 'Oops! Something went wrong. Try after sometime ;) ',
+                'error': true
+            })
+        })
+    }
 })
 
 app.get('/api/getTweets', (req, res, next) => {
-    
-    client.get(`/search/tweets`, {
-        q: "India", // The search term
-        lang: "en",        // Let's only get English tweets
-        count: 10,        // Limit the results to 100 tweets
-    })
-    .then(resp => {
-        res.json({
-            'message': 'Tweets fetched successfully',
-            'tweets': resp,
+    if (!req.query.term) {
+        res.status(404).json({
+            msg: `'term' parameter missing! Provide a valid search term.`
         })
-    })
-    .catch(e => {
-        res.status(500).json({
-            'message': 'Failed fetching tweets',
-            'error': e
+    } else {
+        client.get(`/search/tweets`, {
+            q: "India",
+            lang: "en",
+            count: 10,
         })
-    })
+        .then(resp => {
+            res.json({
+                'message': 'Tweets fetched successfully',
+                'tweets': resp,
+            })
+        })
+        .catch(e => {
+            res.status(500).json({
+                'message': 'Failed fetching tweets',
+                'error': e
+            })
+        })
+    }
 })
 
 

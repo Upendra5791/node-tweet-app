@@ -2,7 +2,7 @@ const cacheName = 'tweet-app';
 const appShell = [
     'style.css',
     'scripts.js',
-    'twit.jpg'
+    'images/twit.jpg'
 ]
 
 self.addEventListener('install', function(e) {
