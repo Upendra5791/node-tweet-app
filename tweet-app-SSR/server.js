@@ -100,3 +100,5 @@ app.get('/api/getTweets', (req, res, next) => {
         })
     }
 })
+
+module.exports = app
