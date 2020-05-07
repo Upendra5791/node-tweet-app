@@ -15,13 +15,14 @@ button.addEventListener('click', function(e) {
     });
 });
 
-const searchBtn = document.getElementById("search-btn");
-if (searchBtn) {
-    searchBtn.addEventListener('click', (e) => {
-        const searchTerm = document.getElementById("search-input").value,
-        rederictURL = `/tweet-list?term=${searchTerm}`;
-        if (searchTerm.length != 0) {
-            window.location = rederictURL;
-        }
+const searchForm = document.getElementById("searchForm");
+if (searchForm) {
+    searchForm.addEventListener('submit', (e) => {
+       e.preventDefault();
+       const searchTerm = document.getElementById("search-input").value,
+       redirectURL = `/tweet-list?term=${searchTerm}`;
+       if (searchTerm.length != 0) {
+           window.location = redirectURL;
+       }
     })
 }

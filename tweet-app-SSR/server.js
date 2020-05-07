@@ -20,7 +20,6 @@ app.set('view engine', 'ejs')
 app.set('views','static/views')
 
 let client;
-
 (async () => {
     try {
         const response = await user.getBearerToken()
@@ -34,11 +33,6 @@ let client;
     }
 })()
 
-
-/* app.use('*', (req, res, next) =>{ 
-    console.log(req.url)
-})
- */
 app.get('/', (req, res, next) => {
     res.render('index')
 })
@@ -51,23 +45,33 @@ app.get('/tweet-list', (req, res, next) => {
             msg: 'Enter a valid search term'
         })
     } else {
-        client.get(`/search/tweets`, {
-            q: req.query.term, 
-            lang: "en",
-            count: 20,
-        })
-        .then(resp => {
-            res.render('tweet-list', {
-                error: false,
-                tweets: resp.statuses
+        try {
+            client.get(`/search/tweets`, {
+                q: req.query.term, 
+                lang: "en",
+                count: 20,
             })
-        })
-        .catch(e => {
-            res.status(500).render('tweet-list').json({
-                'message': 'Oops! Something went wrong. Try after sometime ;) ',
-                'error': true
+            .then(resp => {
+                res.render('tweet-list', {
+                    error: false,
+                    tweets: resp.statuses
+                })
             })
-        })
+            .catch(e => {
+                res.status(500).render('tweet-list', {
+                    'msg': 'Oops! Something went wrong. Try after sometime ;) ',
+                    'error': true,
+                    'tweets': null
+                })
+            })
+        } catch(e) {
+            res.status(500).render('tweet-list', {
+                'msg': 'Oops! Something went wrong. Try after sometime ;)',
+                'error': true,
+                'tweets': null
+            })
+        }
+
     }
 })
 
@@ -78,7 +82,7 @@ app.get('/api/getTweets', (req, res, next) => {
         })
     } else {
         client.get(`/search/tweets`, {
-            q: "India",
+            q: req.query.term,
             lang: "en",
             count: 10,
         })
@@ -96,33 +100,3 @@ app.get('/api/getTweets', (req, res, next) => {
         })
     }
 })
-
-
-// Wrap the following code in an async function that is called
-// immediately so that we can use "await" statements.
-/* (async function() {
-    try {
-        // Retrieve the bearer token from twitter.
-        const response = await user.getBearerToken();
-        console.log(`Got the following Bearer token from Twitter: ${response.access_token}`);
-        
-        // Construct our API client with the bearer token.
-        const tweetApp = new Twitter({
-            bearer_token: response.access_token,
-        });
-
-        let tweets = await tweetApp.get(`/search/tweets`, {
-            q: "India", // The search term
-            lang: "en",        // Let's only get English tweets
-            count: 10,        // Limit the results to 100 tweets
-        });
-
-        // Loop over all the tweets and print the text
-        for (tweet of tweets.statuses) {
-            console.dir(tweet.text);
-        }
-    } catch(e) {
-        console.log("There was an error calling the Twitter API.");
-        console.dir(e);
-    }
-})(); */
