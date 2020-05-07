@@ -1,7 +1,3 @@
-/* if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-}; */
-
 let button = document.getElementById("notifications");
 button.addEventListener('click', function(e) {
     Notification.requestPermission().then(function(result) {
@@ -25,4 +21,13 @@ if (searchForm) {
            window.location = redirectURL;
        }
     })
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then((reg) => {
+            console.log('Registration succeeded. Scope is ' + reg.scope);
+        }).catch((error) => {
+            console.log('Registration failed with ' + error);
+        });
 }

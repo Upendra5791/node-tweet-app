@@ -1,27 +1,27 @@
-const cacheName = 'tweet-app';
+const appName = 'tweet-app-v1'
 const appShell = [
-    'style.css',
-    'scripts.js',
-    'images/twit.jpg'
+    '/',
+    '/images/twit.jpg',
+    '/images/twit-banner.jpg',
+    'script.js',
+    'styles.css',
+    'favicon.ico'
 ]
 
-self.addEventListener('install', function(e) {
-    console.log('[Service Worker] Install');
-    e.waitUntil(
-      caches.open(cacheName).then(function(cache) {
-        console.log('[Service Worker] Caching all: app shell and content');
-        return cache.addAll(appShell);
-      })
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(appName).then((cache) => {
+            return cache.addAll(appShell);
+        })
     );
-  });
+});
 
-
-self.addEventListener('fetch', function(e) {
+self.addEventListener('fetch', (e) => {
     e.respondWith(
-        caches.match(e.request).then(function(r) {
+        caches.match(e.request).then((r) => {
         console.log('[Service Worker] Fetching resource: '+e.request.url);
-        return r || fetch(e.request).then(function(response) {
-            return caches.open(cacheName).then(function(cache) {
+        return r || fetch(e.request).then((response) => {
+            return caches.open(appName).then((cache) => {
             console.log('[Service Worker] Caching new resource: '+e.request.url);
             cache.put(e.request, response.clone());
             return response;
